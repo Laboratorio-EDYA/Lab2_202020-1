@@ -111,12 +111,25 @@ def countElementsByCriteria(criteria, column, lst):
     """
     Retorna la cantidad de elementos que cumplen con un criterio para una columna dada
     """
-    return 0
+    # sea lst, para este algoritmo, la lista "AllMoviesDetailsCleaned.csv"
+    l1= loadCSVFile("AllMoviesCastingRaw.csv")# Sea l1 la lista donde están los nombres de cada director
+    #creo una lista para obtener listas por id para obtener peliculas por director
+    l_movie=[]
+    sum=0
+    for i in l1:
+        for j in lst:
+            if i[0]==j[0]:
+                l_movie.append(j[16])
+                sum+=j[17]
+    size=lt.size(l_movie)# cantidad de peliculas que se encuentran
+    pr= sum/size
+    return (l_movie,size,pr)
 
 def orderElementsByCriteria(function, column, lst, elements):
     """
     Retorna una lista con cierta cantidad de elementos ordenados por el criterio
     """
+    
     return 0
 
 def main():
