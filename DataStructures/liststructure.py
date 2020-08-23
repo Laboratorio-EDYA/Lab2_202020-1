@@ -27,7 +27,7 @@ from DataStructures import singlelinkedlist as slt
   Este módulo selecciona la estructura de datos deseada para ejectuar una operación del TAD Lista.
 """
 
-def newList (datastructure='SINGLE_LINKED', cmpfunction=None):
+def newList (datastructure='ARRAY_LIST', cmpfunction=None):
     """Crea una lista vacia.
 
     Args:

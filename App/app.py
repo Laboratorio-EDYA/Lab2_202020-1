@@ -30,8 +30,10 @@ import config as cf
 import sys
 import csv
 from ADT import list as lt
+from DataStructures import linkedlistiterator as il
 from DataStructures import listiterator as it
 from DataStructures import liststructure as lt
+from DataStructures import singlelinkedlist as ls
 
 from time import process_time 
 
@@ -64,6 +66,7 @@ def loadCSVFile (file, sep=";"):
         print("Hubo un error con la carga del archivo")
     t1_stop = process_time() #tiempo final
     print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
+    print(lst)
     return lst
 
 
@@ -107,28 +110,40 @@ def countElementsFilteredByColumn(criteria, column, lst):
         print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
     return counter
 
-def countElementsByCriteria(criteria, column, lst):
+def countElementsByCriteria(criteria,info1,info2,lst):
     """
     Retorna la cantidad de elementos que cumplen con un criterio para una columna dada
     """
-    # sea lst, para este algoritmo, la lista "AllMoviesDetailsCleaned.csv"
-    l1= loadCSVFile("AllMoviesCastingRaw.csv")# Sea l1 la lista donde están los nombres de cada director
-    #creo una lista para obtener listas por id para obtener peliculas por director
-    l_movie=[]
-    sum=0
-    for i in l1:
-        for j in lst:
-            if i[0]==j[0]:
-                l_movie.append(j[16])
-                sum+=j[17]
-    size=lt.size(l_movie)# cantidad de peliculas que se encuentran
-    pr= sum/size
-    return (l_movie,size,pr)
+    l1= loadCSVFile(info1)# Carga matriz de casting
+    #creo una lista para guardar id de peliculas por director
+    l_movies= lt.newList()
+
+    for i in l1['elements']:
+        if i['director_name'] == criteria:
+            l_movies['elements'].append(i['id'])
+    l_movies['size'] = len(l_movies['elements'])
+
+    l2 = loadCSVFile(info2)
+    counter = 0
+    data = lt.newList()
+    data['average'] = 0.0
+
+    for i in range(len(l2['elements'])):
+        if l2['elements'][i]["id"] == l_movies['elements'][counter]:
+                counter += 1
+                data['elements'].append({'name': l2[i]["original_title"]})
+                data['average'] += (float(l2[i]['vote_average']))
+
+    data['size'] = len(data['elements'])
+    pr = data['average']/data['size']
+
+    return (data['elements'],data['size'],pr)
 
 def orderElementsByCriteria(function, column, lst, elements):
     """
     Retorna una lista con cierta cantidad de elementos ordenados por el criterio
     """
+    
     
     return 0
 
