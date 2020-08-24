@@ -30,6 +30,9 @@ import config as cf
 import sys
 import csv
 from ADT import list as lt
+from Sorting import insertionsort as sor1
+from Sorting import selectionsort as sor2
+from Sorting import shellsort as sor3
 from DataStructures import linkedlistiterator as il
 from DataStructures import listiterator as it
 from DataStructures import liststructure as lt
@@ -79,6 +82,8 @@ def printMenu():
     print("2- Contar los elementos de la Lista")
     print("3- Contar elementos filtrados por palabra clave")
     print("4- Consultar elementos a partir de dos listas")
+    print('5- Crear ranking de peliculas')
+    print('6- Conocer a un director')
     print("0- Salir")
 
 def countElementsFilteredByColumn(criteria, column, lst):
@@ -114,6 +119,7 @@ def countElementsByCriteria(criteria,info1,info2,lst):
     """
     Retorna la cantidad de elementos que cumplen con un criterio para una columna dada
     """
+    t1_start = process_time() #tiempo inicial
     l1= loadCSVFile(info1)# Carga matriz de casting
     #creo una lista para guardar id de peliculas por director
     l_movies= lt.newList()
@@ -136,16 +142,91 @@ def countElementsByCriteria(criteria,info1,info2,lst):
 
     data['size'] = len(data['elements'])
     pr = data['average']/data['size']
-
+    t1_stop = process_time() #tiempo final
+    print("Tiempo de ejecución ",t1_stop-t1_start," segundos") 
     return (data['elements'],data['size'],pr)
 
-def orderElementsByCriteria(function, column, lst, elements):
+def orderElementsByCriteria(function,lst):
     """
     Retorna una lista con cierta cantidad de elementos ordenados por el criterio
     """
+    t1_start = process_time() #tiempo inicial
+
+    lst_count = lt.newList()
+    lst_count['elements'] = [[],[]]
     
+    lst_average = lt.newList()
+    lst_average['elements'] = [[],[]] 
+
+    for i in range(lt.size(lst)):
+        lst_count['elements'][0].append(int(lst['elements'][i]['vote_count'])
+        lst_count['elements'][1].append({lst['elements'][i]['vote_count']:lst['elements'][i]['original_title']})
+        lst_average['elements'][0].append(float(lst['elements'][i]['vote_average'])
+        lst_average['elements'][1].append(lst['elements'][i]['vote_average']:lst['elements'][i]['original_title'])}))
     
-    return 0
+    if function == '1':
+        lst_count['elements'][0] = sor1.insertionSort(lst_count['elements'][0])
+        lst_average['elements'][0] = sor1.insertionSort(lst_average['elements'][0])
+    elif function == '2':
+        lst_count['elements'][0] = sor2.selectionSort(lst_count['elements'][0])
+        lst_average['elements'][0] = sor2.selectionSort(lst_average['elements'][0])
+    elif function == '3':
+        lst_count['elements'][0] = sor3.shellSort(lst_count['elements'][0])
+        lst_average['elements'][0] = sor3.shellSort(lst_average['elements'][0])
+    
+    t1_stop = process_time() #tiempo final
+    print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
+    return (lst_count,lst_average)
+
+def menuReq2():
+    print("1. Ordenamiento por insertion sort")
+    print("2. Ordenamiento por selection sort")
+    print("3. Ordenamiento por shell sort")
+
+def opcionesReq2():
+    menuReq2()
+    opcion = input("Seleccione el tipo de ordenamiento: ")
+    continuar = True
+    while continuar == True:
+        if opcion == '1':
+            continuar = False
+            ans = opcion
+        elif opcion == '2':
+            continuar = False
+            ans = opcion
+        elif opcion == '3':
+            continuar = False
+            ans = opcion
+        else:
+            print("Elija una opcion correcta")
+            menuReq2()
+            opcion = input("Digite su respuesta: ")
+    return ans
+
+def menuReq1():
+    print('1. Probar con archivos grandes')
+    print('2. Probar con archivos pequeños')
+    opcion = input('Digite su opcion: ')
+    return opcion
+
+def opcionesReq():
+    opcion = menuReq1()
+    continuar = True
+    while continuar == True:
+        if opcion == '1':
+            direc1 = 'Data/themoviesdb/AllMoviesCastingRaw.csv'
+            direc2 = 'Data/themoviesdb/AllMoviesDetailsCleaned.csv'
+            id = '\ufeffid'
+            continuar = False 
+        elif opcion == '2':
+            direc1 = 'Data/themoviesdb/MoviesCastingRaw-small.csv'
+            direc2 = 'Data/themoviesdb/SmallMoviesDetailsCleaned.csv'
+            id = 'id'
+            continuar = False
+        else:
+            opcion = input('Opcion errada, digite nuevamente su opcion: ')
+    return (direc1, direc2, id)
+
 
 def main():
     """
@@ -181,6 +262,31 @@ def main():
                     criteria =input('Ingrese el criterio de búsqueda\n')
                     counter=countElementsByCriteria(criteria,0,lista)
                     print("Coinciden ",counter," elementos con el crtierio: '", criteria ,"' (en construcción ...)")
+            elif int(input[0])==5:
+                lst = loadCSVFile(opcionesReq()[1])
+                data = orderElementsByCriteria(opcionesReq2(),lst)
+                print('Lista de los 10 más votados: ')
+                counter = 0
+                for i in data[0]['elements'][0]:
+                    if counter == 11:
+                        break
+                    print(counter+'- '+data[0]['elements'][1][i])
+                print('Lista de los 10 mejores promedios: ')   
+                counter = 0
+                for i in data[1]['elements'][0]:
+                    if counter == 11:
+                        break
+                    print(counter+'- '+data[1]['elements'][0][i])
+            elif int(input[0])==6:
+                lst1 = loadCSVFile(opcionesReq()[0])
+                lst2 = loadCSVFile(opcionesReq()[1])
+                director = input('Digite el director: ')
+                data = countElementsByCriteria(director,lst1,lst2)
+                print('El director ', director,' ha dirigido ',data[1],' peliculas')
+                print('El promedio de las peliculas del director',director,' es ',data[2])
+                print('Las peliculas que ha dirigido son: ')
+                for i in data[0]:
+                    print(i)
             elif int(inputs[0])==0: #opcion 0, salir
                 sys.exit(0)
                 
