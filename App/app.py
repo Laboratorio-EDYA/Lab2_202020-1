@@ -153,16 +153,17 @@ def orderElementsByCriteria(function,lst):
     t1_start = process_time() #tiempo inicial
 
     lst_count = lt.newList()
-    lst_count['elements'] = [[],[]]
+    lst_count['elements'] = [[],{}]
+    print(lst_count)
     
     lst_average = lt.newList()
-    lst_average['elements'] = [[],[]] 
+    lst_average['elements'] = [[],{}]
 
     for i in range(lt.size(lst)):
-        lst_count['elements'][0].append(int(lst['elements'][i]['vote_count'])
-        lst_count['elements'][1].append({lst['elements'][i]['vote_count']:lst['elements'][i]['original_title']})
-        lst_average['elements'][0].append(float(lst['elements'][i]['vote_average'])
-        lst_average['elements'][1].append(lst['elements'][i]['vote_average']:lst['elements'][i]['original_title'])}))
+        lst_count['elements'][0].append(int(lst['elements'][i]['vote_count']))
+        lst_count['elements'][1][lst['elements'][i]['vote_count']] = lst['elements'][i]['original_title']
+        lst_average['elements'][0].append(float(lst['elements'][i]['vote_average']))
+        lst_average['elements'][1][lst['elements'][i]['vote_average']] = lst['elements'][i]['original_title']
     
     if function == '1':
         lst_count['elements'][0] = sor1.insertionSort(lst_count['elements'][0])
