@@ -32,3 +32,4 @@ def insertionSort (lst, lessfunction):
             lt.exchange (lst, pos2, pos2-1)
             pos2 -= 1
         pos1 += 1
+    return lst
