@@ -69,7 +69,6 @@ def loadCSVFile (file, sep=";"):
         print("Hubo un error con la carga del archivo")
     t1_stop = process_time() #tiempo final
     print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
-    print(lst)
     return lst
 
 
@@ -115,12 +114,11 @@ def countElementsFilteredByColumn(criteria, column, lst):
         print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
     return counter
 
-def countElementsByCriteria(criteria,info1,info2,lst):
+def countElementsByCriteria(criteria,l1,l2,id):
     """
     Retorna la cantidad de elementos que cumplen con un criterio para una columna dada
     """
     t1_start = process_time() #tiempo inicial
-    l1= loadCSVFile(info1)# Carga matriz de casting
     #creo una lista para guardar id de peliculas por director
     l_movies= lt.newList()
 
@@ -128,20 +126,21 @@ def countElementsByCriteria(criteria,info1,info2,lst):
         if i['director_name'] == criteria:
             l_movies['elements'].append(i['id'])
     l_movies['size'] = len(l_movies['elements'])
-
-    l2 = loadCSVFile(info2)
+    print(l_movies['elements'])
     counter = 0
     data = lt.newList()
     data['average'] = 0.0
 
-    for i in range(len(l2['elements'])):
-        if l2['elements'][i]["id"] == l_movies['elements'][counter]:
+    for i in range(len(l2['elements'])-1):
+        if l2['elements'][i][id] == l_movies['elements'][counter]:
+            if counter < len(l_movies['elements']) - 1:
+                data['elements'].append(l2['elements'][i]["original_title"])
+                data['average'] += (float(l2['elements'][i]['vote_average']))
                 counter += 1
-                data['elements'].append({'name': l2[i]["original_title"]})
-                data['average'] += (float(l2[i]['vote_average']))
+                
 
     data['size'] = len(data['elements'])
-    pr = data['average']/data['size']
+    pr = data['average']/(len(data))
     t1_stop = process_time() #tiempo final
     print("Tiempo de ejecución ",t1_stop-t1_start," segundos") 
     return (data['elements'],data['size'],pr)
@@ -215,18 +214,18 @@ def opcionesReq():
     continuar = True
     while continuar == True:
         if opcion == '1':
-            direc1 = 'Data/themoviesdb/AllMoviesCastingRaw.csv'
-            direc2 = 'Data/themoviesdb/AllMoviesDetailsCleaned.csv'
+            direc1 = 'Data/theMoviesdb/AllMoviesCastingRaw.csv'
+            direc2 = 'Data/theMoviesdb/AllMoviesDetailsCleaned.csv'
             id = '\ufeffid'
             continuar = False 
         elif opcion == '2':
-            direc1 = 'Data/themoviesdb/MoviesCastingRaw-small.csv'
-            direc2 = 'Data/themoviesdb/SmallMoviesDetailsCleaned.csv'
+            direc1 = 'Data/theMoviesdb/MoviesCastingRaw-small.csv'
+            direc2 = 'Data/theMoviesdb/SmallMoviesDetailsCleaned.csv'
             id = 'id'
             continuar = False
         else:
             opcion = input('Opcion errada, digite nuevamente su opcion: ')
-    return (direc1, direc2, id)
+    return (direc1, direc2,id)
 
 
 def main():
@@ -263,7 +262,7 @@ def main():
                     criteria =input('Ingrese el criterio de búsqueda\n')
                     counter=countElementsByCriteria(criteria,0,lista)
                     print("Coinciden ",counter," elementos con el crtierio: '", criteria ,"' (en construcción ...)")
-            elif int(input[0])==5:
+            elif int(inputs[0])==5:
                 lst = loadCSVFile(opcionesReq()[1])
                 data = orderElementsByCriteria(opcionesReq2(),lst)
                 print('Lista de los 10 más votados: ')
@@ -278,16 +277,19 @@ def main():
                     if counter == 11:
                         break
                     print(counter+'- '+data[1]['elements'][0][i])
-            elif int(input[0])==6:
-                lst1 = loadCSVFile(opcionesReq()[0])
-                lst2 = loadCSVFile(opcionesReq()[1])
+            elif int(inputs[0])==6:
+                opciones = opcionesReq()
+                lst1 = loadCSVFile(opciones[0])
+                lst2 = loadCSVFile(opciones[1])
                 director = input('Digite el director: ')
-                data = countElementsByCriteria(director,lst1,lst2)
+                data = countElementsByCriteria(director,lst1,lst2,opciones[2])
                 print('El director ', director,' ha dirigido ',data[1],' peliculas')
                 print('El promedio de las peliculas del director',director,' es ',data[2])
                 print('Las peliculas que ha dirigido son: ')
+                x = 1
                 for i in data[0]:
-                    print(i)
+                    print(i,x)
+                    x += 1
             elif int(inputs[0])==0: #opcion 0, salir
                 sys.exit(0)
                 
